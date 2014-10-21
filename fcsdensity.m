@@ -48,7 +48,7 @@ end
 
 
 if strcmpi(plotstyle,'density') 
-    density = hist3([X Y],{xi yi});
+    density = hist3([X Y],{xi yi})./numel(xi);
     pcolor(xi,yi,density')
     shading flat
 %     surf(xi,yi,density','edgecolor','none')
