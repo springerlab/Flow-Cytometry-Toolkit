@@ -1,4 +1,11 @@
 function subpops = fcsseg1d(data,chan,varargin)
+% FCSSEG1D fits a 2-gaussian mixture model to one fluorescence channel
+% (XFP) and forward scatter (SSC) data. Data for 2 subpopulations is
+% returned:
+%
+%   subpops(1) contains XFP+ events
+%   subpops(2) contains XFP- events
+% 
 % 20130107
 p = inputParser;
 addRequired(p,'data',@isstruct);
