@@ -4,7 +4,7 @@ function ParamStruct = pstrat(paramsToConvert,isReverse)
 %
 %   2012/07/12 JW
 %   2014/11/3 MS
-allNames=
+allNames = ...
     {'FSC LogH','';
     'FSC LinH','fsc';
     'SSC LogH','';
@@ -39,7 +39,7 @@ allNames=
     'Time','t'}
 
 paramNames = allNames(:,1);
-nickNames = allNames=(:,2);
+nickNames = allNames(:,2);
 
 if nargin == 0
     % display default conversions
