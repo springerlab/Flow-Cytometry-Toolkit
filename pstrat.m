@@ -36,7 +36,7 @@ allNames = ...
 	'PACB(445/60) LogH','bfp';
     'PACB(445/60) LogA','';
 	'Width','';
-    'Time','t'}
+    'Time','t'};
 
 paramNames = allNames(:,1);
 nickNames = allNames(:,2);
