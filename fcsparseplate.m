@@ -26,6 +26,9 @@ for r = 1:8
     for c = 1:12
         fprintf([ '\b\b\b\b' coord2well(r,c) '\n']);    % gives "scrolling" feedback
         [data meta] = fcsparsewell(datadir, platename, [r c]);
+        if isempty(data) || fcsisempty(data)
+            continue;
+        end
         
         if r==1 && c == 1
             platedata = data;

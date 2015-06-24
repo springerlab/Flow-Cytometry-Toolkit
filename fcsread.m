@@ -127,6 +127,11 @@ if ~checkMode
         'Data in %s is stored in an unsupported format.',filename)
 end
  
+timeStep = str2num(lookupTextData(textCell,'$TIMESTEP')); % FCS3.0 format
+if isempty(timeStep)
+    timeStep = str2num(lookupTextData(textCell,'TIMESTEP')); % FCS2.0 format
+end
+
 %
 fseek(fid,fileHeader.dataStart,-1);
 if strcmpi('F',datatype)
@@ -153,7 +158,7 @@ elseif strcmpi('I',datatype)
             data(:,i)=paramVals(i).Amplification(2)*10.^(data(:,i)/65536*paramVals(i).Amplification(1));
         elseif strfind(paramVals(i).Name,'Width')
         elseif strfind(paramVals(i).Name,'Time')
-            data(:,i)=data(:,i)*str2num(lookupTextData(textCell,'$TIMESTEP'));
+            data(:,i)=data(:,i)*timeStep;
         end
     end
     

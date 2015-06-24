@@ -10,39 +10,39 @@ function [gatearray, idx] = uigetgate(data, paramnames, scaling, varargin)
 p = inputParser;
 addParamValue(p,'xlim',[],@isnumeric);
 addParamValue(p,'ylim',[],@isnumeric);
+addParamValue(p,'plotdata',true,@islogical);
 
 parse(p, varargin{:});
 xl = p.Results.xlim;
 yl = p.Results.ylim;
+plotdata = p.Results.plotdata;
 
 if nargin<3
     scaling = 'lin';
 end
 [scalex scaley] = parsescaling(scaling);
 
-% cla
-
-gatearray = struct;
-
-% prompt for gates
-
-% plot all data
-gateArray = {};
 xdata = data.(paramnames{1});
 ydata = data.(paramnames{2});
-plot(scalex(xdata),scaley(ydata),'.','markersize',3);
-xlabel(paramnames{1})
-ylabel(paramnames{2})
-if ~isempty(xl), xlim(xl); end
-if ~isempty(yl), ylim(yl); end
 
-hold all;
-grid on
+if plotdata
+    % plot data
+    colors = lines;
+    plot(scalex(xdata),scaley(ydata),'.','markersize',3,'color',[.5 .5 .5]);
+    xlabel(paramnames{1})
+    ylabel(paramnames{2})
+    if ~isempty(xl), xlim(xl); end
+    if ~isempty(yl), ylim(yl); end
+    hold all;
+    grid on
+end
 
+% prompt for gates
 fprintf(['Select a gate by clicking its vertices, and then hitting\n'...
     '[Enter]. You can select more than one gate. To exit, hit [Enter]\n'...
     'without clicking any points.\n']);  
 
+gatearray = struct;
 k = 1;
 while 1
     % user draws polygon
@@ -64,11 +64,13 @@ while 1
     % draw polygon boundaries
     axis manual
     plot(x,y,'k','linewidth',2);
-
-    % plot data within polygon in different color
+    
     idx = inpolygon(scalex(xdata),scaley(ydata), x,y);
-    plot(scalex(xdata(idx)),scaley(ydata(idx)),'.','markersize',3);
-
+        
+    if plotdata
+        % plot data within polygon in different color
+        plot(scalex(xdata(idx)),scaley(ydata(idx)),'.','markersize',3,'color',colors(k,:));
+    end
     % show count and percent
     xc = mean(x(1:end-1));
     yc = mean(y(1:end-1));
@@ -76,7 +78,7 @@ while 1
     percent = count./fcsnumel(data).*100;
     str = {num2str(count); sprintf('%4.2f%%',percent)};
     text(xc,yc,str,'horizontalalignment','center',...
-        'verticalalignment','middle','fontweight','bold', 'Fontsize', Fontsize_cal(gca,20));
+        'verticalalignment','middle','fontweight','bold', 'Fontsize', calc_fontsize(gca,30));
     
     k = k+1;
 end 
@@ -97,3 +99,25 @@ elseif strcmp(scaling,'semilogy')
     scalex = @(x) x;
     scaley = @log10;
 end
+
+function marker_size = calc_fontsize(fig_handle, ratio)
+
+% define as the min of width and heigth of fig_handle, in unit of pixel
+% by default, ratio is 20, fig_handle is gca
+% try Fontsize_cal(gca, 20)
+%
+% written by Bo Hua
+
+if nargin < 2
+    ratio = 20;
+end
+
+if nargin <1
+    fig_handle = gca;
+end
+
+backup = get(fig_handle, 'units');
+set(fig_handle, 'units', 'pixels');
+fig_dimensions = get(fig_handle, 'position');
+marker_size = ceil(min(fig_dimensions(3), fig_dimensions(4))/ratio);
+set(fig_handle, 'units', backup);
