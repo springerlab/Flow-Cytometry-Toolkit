@@ -37,7 +37,7 @@ if ischar(paramstokeep)
             parname = underscorify(pnamelist{c});
             datastruct.(parname) = data(:,c);
         end
-    elseif strcmp(paramstokeep,'common')    
+    elseif strcmp(paramstokeep,'common')
         % grab only common channels and rename them
         datastruct = grab_specific_params(data, pnamelist, translatefunc([],0));
         
@@ -46,12 +46,12 @@ if ischar(paramstokeep)
         nameconversions = translatefunc([],1); % param names -> nicknames
         for c=1:length(pnamelist)
             parname = underscorify(pnamelist{c});
-
+            
             % use any default nicknames that are available
             if isfield(nameconversions, parname) && ~isempty(nameconversions.(parname))
                 parname = nameconversions.(parname);
             end
-
+            
             datastruct.(parname) = data(:,c);
         end
     end
@@ -80,13 +80,13 @@ metadata.end_time = datenum([Date, ' ', etim_tmp{1}{1}]);
 if strcmp(cytometer,'LSRII')
     % LSRII-specific metadata
     metadata.plate_name = find(strcmp('PLATE NAME',{textHeader{:,1}}));
-
-%     % this works but isn't useful
-%     plate_id_idx = find(strcmp('PLATE ID',{textHeader{:,1}}));
-%     if ~isempty(plate_id_idx)
-%         metadata.plate_id = textHeader{plate_id_idx,2};
-%     end
-
+    
+    %     % this works but isn't useful
+    %     plate_id_idx = find(strcmp('PLATE ID',{textHeader{:,1}}));
+    %     if ~isempty(plate_id_idx)
+    %         metadata.plate_id = textHeader{plate_id_idx,2};
+    %     end
+    
     well_id_idx = find(strcmp('WELL ID',{textHeader{:,1}}));
     if ~isempty(well_id_idx)
         well_id = textHeader{well_id_idx,2};
@@ -100,7 +100,7 @@ else
     if ~isempty(plate_id_idx)
         metadata.plate_id = textHeader{plate_id_idx,2};
     end
-
+    
     well_id_idx = find(strcmp('WELL_ID',{textHeader{:,1}}));
     if ~isempty(well_id_idx)
         well_id = textHeader{well_id_idx,2};
@@ -108,7 +108,7 @@ else
         metadata.col = str2num(well_id(2:end));
         metadata.well_id = well_id;
     end
-
+    
 end
 
 % expr_name
@@ -117,13 +117,15 @@ idx_expr_LSR = find(strcmp('EXPERIMENT NAME',{textHeader{:,1}}));
 
 if ~isempty(idx_expr_LSR)
     idx_expr = idx_expr_LSR;
+    metadata.expr_name = textHeader{idx_expr, 2};
 elseif ~isempty(idx_expr_strat)
     idx_expr = idx_expr_strat;
+    metadata.expr_name = textHeader{idx_expr, 2};
 else
-    error('no expr id identified')
+    warning('no expr id identified')
+    metadata.expr_name = '';
 end
 
-metadata.expr_name = textHeader{idx_expr, 2};
 
 % helper functions
 function datastruct = grab_specific_params(data, pnamelist, paramstokeep)

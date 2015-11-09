@@ -1,11 +1,13 @@
 function ha = plotsubpops(subpops,chans,varargin)
 % 20130411
+% update 20151004
 p = inputParser;
 addParamValue(p,'plotoptions',{'.','markersize',3},@iscell);
+addParamValue(p,'colors',lines,@isnumeric);
 parse(p,varargin{:});
 plotoptions = p.Results.plotoptions;
+colors = p.Results.colors;
 
-colors = lines;
 
 for ipop=1:length(subpops)
     xdata = log10(subpops(ipop).(chans{1}));
