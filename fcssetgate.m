@@ -3,6 +3,15 @@ function [ gateOut ] = fcssetgate( dat, nGate, gateplot, gatenameArray )
 %specified in gateplot, the gatename is only used to prompt which gate is
 %being created. all gates are created in gateOut
 
+% Input:
+%   dat: fcs data structure used in this package
+%   nGate: the number of gate to be added manually
+%   gateplot: a struct including fields to specify how to make a gate
+%       xfunc: a function handle, used to convert x data
+%       yfunc: a function handle, used to convert y data.
+%       gatename: cell array of strings, the name for the game, will be
+%       used for labeling plots and figures.
+
 gatemethod = 'polygonfunc';
 
 gateOut = struct(...

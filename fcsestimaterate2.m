@@ -1,5 +1,5 @@
 function [ rate ] = fcsestimaterate2( dataT, varargin )
-%UNTITLED12 Summary of this function goes here
+%fcsestimaterate2 Estimate the number of cells per second
 %   Detailed explanation goes here
 
 % dataT = sort(dataT, ascend);
