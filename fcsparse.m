@@ -1,4 +1,4 @@
-function [datastruct metadata]= fcsparse(filename, paramstokeep)
+function [datastruct metadata]= fcsparse(filename, paramstokeep, varargin)
 % FCSPARSE parses an FCS 3.0 file. It works on tube-mode and plate-mode
 % (single-well) data files.
 %
@@ -7,7 +7,21 @@ function [datastruct metadata]= fcsparse(filename, paramstokeep)
 %       Stratedigm, update well_id extraction for LSRII. Still need to work
 %       on tube data for both machine
 %   Modified 20120906 JW does parameter translations for LSRII as well.
+%   Updated  20120914 BH solve LSRII plate_name bug
+%   Updated  20130212 BH solve problems to read LSRII temp files directly,
+%   due to unspecified Cytometer type, by adding optional input argument
 
+% parse input
+parser = inputParser;
+addRequired(parser,'filename',@ischar);
+addRequired(parser,'paramstokeep',@isstruct);
+addParamValue(parser,'cytometer','',@ischar);
+
+parse(parser, filename, paramstokeep, varargin{:});
+
+cytometer = parser.Results.cytometer;
+
+%
 % read data
 % filename
 [data,paramVals,textHeader] = fcsread(filename);
@@ -80,6 +94,7 @@ metadata.end_time = datenum([Date, ' ', etim_tmp{1}{1}]);
 if strcmp(cytometer,'LSRII')
     % LSRII-specific metadata
     metadata.plate_name = find(strcmp('PLATE NAME',{textHeader{:,1}}));
+    % metadata.plate_name = textHeader{find(strcmp('PLATE NAME',{textHeader{:,1}})),2};  % Bo's version, not sure which one is better
     
     %     % this works but isn't useful
     %     plate_id_idx = find(strcmp('PLATE ID',{textHeader{:,1}}));
@@ -99,6 +114,11 @@ else
     plate_id_idx = find(strcmp('PLATE_ID',{textHeader{:,1}}));
     if ~isempty(plate_id_idx)
         metadata.plate_id = textHeader{plate_id_idx,2};
+    end
+    
+    Date_idx = find(strcmp('$DATE',{textHeader{:,1}}));
+    if ~isempty(Date_idx)
+        metadata.date = textHeader{Date_idx,2};
     end
     
     well_id_idx = find(strcmp('WELL_ID',{textHeader{:,1}}));
@@ -126,6 +146,11 @@ else
     metadata.expr_name = '';
 end
 
+metadata.expr_name = textHeader{idx_expr, 2};
+
+% BTIM
+BTIMIdx = find(cellfun(@(x) ~isempty(x), regexp(textHeader, 'BTIM')));
+metadata.BTim = textHeader{BTIMIdx, 2};
 
 % helper functions
 function datastruct = grab_specific_params(data, pnamelist, paramstokeep)
