@@ -14,7 +14,7 @@ function [datastruct metadata]= fcsparse(filename, paramstokeep, varargin)
 % parse input
 parser = inputParser;
 addRequired(parser,'filename',@ischar);
-addRequired(parser,'paramstokeep',@isstruct);
+addRequired(parser,'paramstokeep',@(x) isstruct(x) || ischar(x));
 addParamValue(parser,'cytometer','',@ischar);
 
 parse(parser, filename, paramstokeep, varargin{:});
