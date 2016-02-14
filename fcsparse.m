@@ -1,4 +1,4 @@
-function [datastruct metadata]= fcsparse(filename, paramstokeep, varargin)
+function [datastruct metadata]= fcsparse(filename, varargin)
 % FCSPARSE parses an FCS 3.0 file. It works on tube-mode and plate-mode
 % (single-well) data files.
 %
@@ -14,12 +14,13 @@ function [datastruct metadata]= fcsparse(filename, paramstokeep, varargin)
 % parse input
 parser = inputParser;
 addRequired(parser,'filename',@ischar);
-addRequired(parser,'paramstokeep',@(x) isstruct(x) || ischar(x));
+addOptional(parser,'paramstokeep','all',@(x) isstruct(x) || ischar(x));
 addParamValue(parser,'cytometer','',@ischar);
 
-parse(parser, filename, paramstokeep, varargin{:});
+parse(parser, filename, varargin{:});
 
 cytometer = parser.Results.cytometer;
+paramstokeep = parser.Results.paramstokeep;
 
 %
 % read data
@@ -38,10 +39,6 @@ end
 % works on both stratedigm and lsrii except where noted
 datastruct = struct;
 pnamelist = {paramVals.Name};
-
-if exist('paramstokeep') ~= 1
-    paramstokeep = 'all';
-end
 
 if ischar(paramstokeep)
     % keyword mode
@@ -145,8 +142,6 @@ else
     warning('no expr id identified')
     metadata.expr_name = '';
 end
-
-metadata.expr_name = textHeader{idx_expr, 2};
 
 % BTIM
 BTIMIdx = find(cellfun(@(x) ~isempty(x), regexp(textHeader, 'BTIM')));
