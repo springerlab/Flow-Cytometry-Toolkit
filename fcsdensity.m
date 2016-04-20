@@ -5,12 +5,12 @@ function out = fcsdensity(X,Y,varargin)
 p = inputParser;
 addRequired(p,'X',@isnumeric);
 addRequired(p,'Y',@isnumeric);
-addParamValue(p,'xi',[],@isnumeric);
-addParamValue(p,'yi',[],@isnumeric);
-addParamValue(p,'nbins',[],@validate_nbins);
-addParamValue(p,'cmap',flipud(bone),@isnumeric);
-addParamValue(p,'plotstyle','density',@ischar);
-addParamValue(p,'plotoptions',{'.'},@iscell);
+addParameter(p,'xi',[],@isnumeric);
+addParameter(p,'yi',[],@isnumeric);
+addParameter(p,'nbins',[],@validate_nbins);
+addParameter(p,'cmap',flipud(bone),@isnumeric);
+addParameter(p,'plotstyle','density',@ischar);
+addParameter(p,'plotoptions',{'.'},@iscell);
 
 parse(p,X,Y,varargin{:});
 xi = p.Results.xi;
@@ -49,6 +49,7 @@ end
 
 if strcmpi(plotstyle,'density') 
     density = hist3([X Y],{xi yi})./numel(X);
+    out = density;
     pcolor(xi,yi,density')
     shading flat
 %     surf(xi,yi,density','edgecolor','none')
