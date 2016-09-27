@@ -27,7 +27,7 @@ gateOut = struct(...
 formatax
 printwidth = 3; set(gca, 'fontsize', convertFontsize('fontsize', 8, 'printwidth',printwidth))
 
-quicklabel3(gateplot.xcha,gateplot.ycha,'', 'fontsize', convertFontsize('fontsize', 10, 'printwidth',printwidth))
+quicklabel3(gateplot.xcha,gateplot.ycha,'', 'fontsize', convertFontsize('fontsize', 10, 'printwidth',printwidth));
 
 datX = gateplot.xfunc(dat.(gateplot.xcha));
 datY = gateplot.yfunc(dat.(gateplot.ycha));
@@ -37,7 +37,7 @@ plot(datX, datY, 'ko', 'markersize', 5)
 for iGate = 1:nGate
     
     h = cornertxt(gatenameArray{iGate}, 'nw'...
-        , 'fontsize', convertFontsize('fontsize', 12, 'printwidth',printwidth))
+        , 'fontsize', convertFontsize('fontsize', 12, 'printwidth',printwidth));
     
     tmp = ginput();
     tmp = [tmp(:,:); tmp(1,:)];
